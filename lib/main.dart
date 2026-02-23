@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'services/storage_service.dart';
+import 'services/notification_service.dart';
 import 'screens/gpa_screen.dart';
 import 'screens/assignments_screen.dart';
 import 'screens/timer_screen.dart';
@@ -10,11 +11,10 @@ import 'screens/notes_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService.init();
   final storage = StorageService();
   await storage.init();
-  runApp(
-    ChangeNotifierProvider(create: (_) => storage, child: const MyApp()),
-  );
+  runApp(ChangeNotifierProvider(create: (_) => storage, child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -25,13 +25,8 @@ class MyApp extends StatelessWidget {
       title: 'My Dashboard',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF667EEA),
-          primary: const Color(0xFF667EEA),
-          secondary: const Color(0xFF764BA2),
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF667EEA), primary: const Color(0xFF667EEA), secondary: const Color(0xFF764BA2)),
         useMaterial3: true,
-        fontFamily: 'Roboto',
       ),
       home: const MainScreen(),
     );
@@ -48,12 +43,7 @@ class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = const [
-    GpaScreen(),
-    AssignmentsScreen(),
-    TimerScreen(),
-    ScheduleScreen(),
-    FormulasScreen(),
-    NotesScreen(),
+    GpaScreen(), AssignmentsScreen(), TimerScreen(), ScheduleScreen(), FormulasScreen(), NotesScreen(),
   ];
 
   final List<NavigationDestination> _destinations = const [
@@ -75,7 +65,6 @@ class _MainScreenState extends State<MainScreen> {
         destinations: _destinations,
         backgroundColor: Colors.white,
         indicatorColor: const Color(0xFF667EEA).withOpacity(0.15),
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       ),
     );
   }
