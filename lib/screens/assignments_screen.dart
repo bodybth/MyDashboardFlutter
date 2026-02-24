@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../services/notification_service.dart';
 import 'package:intl/intl.dart';
 import '../services/storage_service.dart';
-import '../services/notification_service.dart';
 import '../models/models.dart';
 import 'widgets.dart';
 
@@ -167,7 +167,18 @@ class AssignmentsScreen extends StatelessWidget {
                             final time = await showTimePicker(context: ctx, initialTime: TimeOfDay.now());
                             if (time == null || !ctx.mounted) return;
                             final alarmTime = DateTime(date.year, date.month, date.day, time.hour, time.minute);
-                            await openAlarmClock(ctx, alarmTime, nameCtrl.text.isNotEmpty ? nameCtrl.text : 'Assignment');
+                            if (alarmTime.isAfter(DateTime.now())) {
+                              final label = nameCtrl.text.isNotEmpty ? nameCtrl.text : 'Assignment';
+                              final alarmId = alarmTime.millisecondsSinceEpoch ~/ 1000 % 100000;
+                              await NotificationService.scheduleAlarm(
+                                id: alarmId,
+                                title: '⏰ Alarm: $label',
+                                body: 'Scheduled alarm for your assignment',
+                                scheduledTime: alarmTime,
+                              );
+                              if (ctx.mounted) ScaffoldMessenger.of(ctx).showSnackBar(
+                                SnackBar(content: Text('Alarm set for ${alarmTime.hour.toString().padLeft(2,"0")}:${alarmTime.minute.toString().padLeft(2,"0")}'), duration: const Duration(seconds: 2)));
+                            }
                           },
                         ),
                       ),
@@ -351,7 +362,18 @@ class _AssignmentCard extends StatelessWidget {
                     if (date == null || !ctx.mounted) return;
                     final time = await showTimePicker(context: ctx, initialTime: TimeOfDay.now());
                     if (time == null || !ctx.mounted) return;
-                    await openAlarmClock(ctx, DateTime(date.year, date.month, date.day, time.hour, time.minute), nameCtrl.text);
+                    final alarmTime = DateTime(date.year, date.month, date.day, time.hour, time.minute);
+                    if (alarmTime.isAfter(DateTime.now())) {
+                      final alarmId = alarmTime.millisecondsSinceEpoch ~/ 1000 % 100000;
+                      await NotificationService.scheduleAlarm(
+                        id: alarmId,
+                        title: '⏰ Alarm: ${nameCtrl.text.isNotEmpty ? nameCtrl.text : "Assignment"}',
+                        body: 'Scheduled alarm',
+                        scheduledTime: alarmTime,
+                      );
+                      if (ctx.mounted) ScaffoldMessenger.of(ctx).showSnackBar(
+                        SnackBar(content: Text('Alarm set for ${alarmTime.hour.toString().padLeft(2,"0")}:${alarmTime.minute.toString().padLeft(2,"0")}'), duration: const Duration(seconds: 2)));
+                    }
                   },
                 )),
               ]),

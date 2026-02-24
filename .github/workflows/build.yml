@@ -1,4 +1,4 @@
-name: Build Flutter APK
+name: Build & Release APK
 
 on:
   push:
@@ -30,8 +30,33 @@ jobs:
       - name: Build APK
         run: flutter build apk --release --no-tree-shake-icons
 
-      - name: Upload APK
+      - name: Rename APK
+        run: |
+          DATE=$(date +'%Y-%m-%d')
+          cp build/app/outputs/flutter-apk/app-release.apk dashboard-$DATE.apk
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: dashboard-release
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: dashboard-apk
+          path: dashboard-*.apk
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: "Dashboard v${{ github.run_number }}"
+          body: |
+            ## Auto-release from commit ${{ github.sha }}
+
+            **Changes:** ${{ github.event.head_commit.message }}
+
+            ### Install
+            1. Download `dashboard-*.apk` below
+            2. Open on your Android phone
+            3. Allow "Install from unknown sources" if prompted
+          files: dashboard-*.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
