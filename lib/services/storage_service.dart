@@ -45,11 +45,7 @@ class StorageService extends ChangeNotifier {
     if (nb != null) {
       notebooks = (jsonDecode(nb) as List).map((e) => Notebook.fromJson(e)).toList();
     } else {
-      notebooks = [
-        Notebook(id: 'nb_formulas', title: 'Formulas',       emoji: '📐', type: 'formulas'),
-        Notebook(id: 'nb_notes',    title: 'Notes',           emoji: '📝', type: 'notes'),
-        Notebook(id: 'nb_emails',   title: 'Email Addresses', emoji: '📧', type: 'notes'),
-      ];
+      notebooks = [];
       _saveNotebooks();
     }
 
