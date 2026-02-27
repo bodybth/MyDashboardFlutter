@@ -199,11 +199,7 @@ class StorageService extends ChangeNotifier {
     scheduleItems.clear();
     notes.clear();
     formulas = List.from(defaultFormulas);
-    notebooks = [
-      Notebook(id: 'nb_formulas', title: 'Formulas',       emoji: '📐', type: 'formulas'),
-      Notebook(id: 'nb_notes',    title: 'Notes',           emoji: '📝', type: 'notes'),
-      Notebook(id: 'nb_emails',   title: 'Email Addresses', emoji: '📧', type: 'notes'),
-    ];
+    notebooks = [];
     noteCategories    = List.from(defaultNoteCategories);
     formulaCategories = List.from(defaultFormulaCategories);
     priorities        = List.from(defaultPriorities);
