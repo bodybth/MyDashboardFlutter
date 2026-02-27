@@ -192,17 +192,6 @@ lib/
 
 ---
 
-## 🔄 CI/CD
-
-GitHub Actions automatically builds and publishes a new APK on every push to `main`:
-
-- Sets `versionCode` to the GitHub run number (ensures each build is higher than the last)
-- Sets `versionName` to `1.x.{run_number}`
-- Builds a release APK with `--no-tree-shake-icons`
-- Creates a GitHub Release with the APK attached and installation instructions
-
----
-
 ## 📄 License
 
 This project is for personal use. All rights reserved © 2025.
