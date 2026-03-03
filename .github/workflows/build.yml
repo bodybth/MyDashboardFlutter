@@ -59,7 +59,21 @@ jobs:
           sed -i "s/versionName \"[^\"]*\"/versionName \"${{ env.VERSION_CODE }}\"/" android/app/build.gradle
           echo "=== build.gradle ==="
           grep -E "versionCode|versionName" android/app/build.gradle
-
+      - name: Generate release keystore
+        run: |
+          keytool -genkey -v \
+            -keystore keystore.jks \
+            -alias mydashboard \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -storepass "${{ secrets.STORE_PASSWORD }}" \
+            -keypass "${{ secrets.KEY_PASSWORD }}" \
+            -dname "CN=My Dashboard, OU=App, O=bodybth, L=Unknown, S=Unknown, C=US"
+          echo "KEYSTORE_PATH=${{ github.workspace }}/keystore.jks" >> $GITHUB_ENV
+          echo "KEY_ALIAS=mydashboard" >> $GITHUB_ENV
+          echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_ENV
+          echo "STORE_PASSWORD=${{ secrets.STORE_PASSWORD }}" >> $GITHUB_ENV
       - run: flutter build apk --release --no-tree-shake-icons --target-platform android-arm,android-arm64
 
       - name: Rename APK

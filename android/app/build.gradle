@@ -19,6 +19,15 @@ android {
         jvmTarget = "1.8"
     }
 
+    signingConfigs {
+        release {
+            keyAlias System.getenv("KEY_ALIAS") ?: "mydashboard"
+            keyPassword System.getenv("KEY_PASSWORD") ?: "changeme"
+            storeFile System.getenv("KEYSTORE_PATH") ? file(System.getenv("KEYSTORE_PATH")) : null
+            storePassword System.getenv("STORE_PASSWORD") ?: "changeme"
+        }
+    }
+
     defaultConfig {
         applicationId "com.bodybth.mydashboard"
         minSdk 21
@@ -29,7 +38,7 @@ android {
 
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled false
             shrinkResources false
         }
